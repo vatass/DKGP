@@ -1,6 +1,0 @@
-Biomarker,Total_Subjects,Unique_Subjects,Age_Mean,Age_Std,Age_Range,Normal_Count,Normal_Percentage,MCI_Count,MCI_Percentage,AD_Count,AD_Percentage,APOE4_0 alleles_Count,APOE4_0 alleles_Percentage,APOE4_1 allele_Count,APOE4_1 allele_Percentage,APOE4_2 alleles_Count,APOE4_2 alleles_Percentage,APOE4_Unknown_Count,APOE4_Unknown_Percentage
-Hippocampus (ROI 17),2465,2465,69.0,11.1,30.0-93.0,1437,58.3%,686,27.8%,342,13.9%,1423,57.7%,767,31.1%,170,6.9%,105.0,4.3%
-SPARE-AD,2465,2465,68.9,11.0,30.0-93.0,1428,57.9%,698,28.3%,339,13.8%,1429,58.0%,761,30.9%,176,7.1%,99.0,4.0%
-SPARE-BA,2465,2465,68.9,11.0,30.0-93.0,1428,57.9%,698,28.3%,339,13.8%,1429,58.0%,761,30.9%,176,7.1%,99.0,4.0%
-ADAS,1240,1240,74.0,7.1,55.0-91.3,400,32.3%,610,49.2%,230,18.5%,655,52.8%,467,37.7%,118,9.5%,,
-MMSE,1959,1959,72.3,8.3,30.0-93.0,993,50.7%,656,33.5%,310,15.8%,1088,55.5%,652,33.3%,145,7.4%,74.0,3.8%

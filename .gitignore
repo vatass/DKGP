@@ -1,0 +1,55 @@
+# Large data files that exceed GitHub's file size limits
+data/subjectsamples_longclean_dl_hmuse_allstudies.csv
+data/subjectsamples_longclean_dl_muse_allstudies.csv
+data/istaging_with_dl_muse_harmonized_new_version.csv
+
+# Other large data files that might be added
+data/*.csv
+data/*.pkl
+
+# Model files (can be large)
+models/*.pth
+models_spare/*.pth
+models_cognitive/*/*.pth
+
+# Log files
+logs_*/
+*.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Results and output directories (optional - uncomment if you don't want to track results)
+# future_inference_results/
+# evaluation_results_*/
+# inference_results_*/
+# population_demographics_results/
+# trajectory_plots/
