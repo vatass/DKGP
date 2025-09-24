@@ -1,0 +1,64 @@
+[KeOps] Compiling cuda jit compiler engine ... 
+[KeOps] Warning : There were warnings or errors compiling formula :
+In file included from /home/cbica/anaconda3/envs/dk/lib/python3.8/site-packages/keopscore/binders/nvrtc/nvrtc_jit.cpp:21:0:
+/home/cbica/anaconda3/envs/dk/lib/python3.8/site-packages/keopscore/binders/nvrtc/nvrtc_jit.cpp: In function ‘int Compile(const char*, const char*, int, int, const char*)’:
+<command-line>:0:20: error: ‘nvrtcGetCUBINSize’ was not declared in this scope
+/home/cbica/anaconda3/envs/dk/lib/python3.8/site-packages/keopscore/include/utils_pe.h:6:26: note: in definition of macro ‘NVRTC_SAFE_CALL’
+     nvrtcResult result = x;                                       \
+                          ^
+/home/cbica/anaconda3/envs/dk/lib/python3.8/site-packages/keopscore/binders/nvrtc/nvrtc_jit.cpp:90:21: note: in expansion of macro ‘nvrtcGetTARGETSize’
+     NVRTC_SAFE_CALL(nvrtcGetTARGETSize(prog, &targetSize));
+                     ^~~~~~~~~~~~~~~~~~
+<command-line>:0:20: note: suggested alternative: ‘nvrtcGetPTXSize’
+/home/cbica/anaconda3/envs/dk/lib/python3.8/site-packages/keopscore/include/utils_pe.h:6:26: note: in definition of macro ‘NVRTC_SAFE_CALL’
+     nvrtcResult result = x;                                       \
+                          ^
+/home/cbica/anaconda3/envs/dk/lib/python3.8/site-packages/keopscore/binders/nvrtc/nvrtc_jit.cpp:90:21: note: in expansion of macro ‘nvrtcGetTARGETSize’
+     NVRTC_SAFE_CALL(nvrtcGetTARGETSize(prog, &targetSize));
+                     ^~~~~~~~~~~~~~~~~~
+<command-line>:0:16: error: ‘nvrtcGetCUBIN’ was not declared in this scope
+/home/cbica/anaconda3/envs/dk/lib/python3.8/site-packages/keopscore/include/utils_pe.h:6:26: note: in definition of macro ‘NVRTC_SAFE_CALL’
+     nvrtcResult result = x;                                       \
+                          ^
+/home/cbica/anaconda3/envs/dk/lib/python3.8/site-packages/keopscore/binders/nvrtc/nvrtc_jit.cpp:93:21: note: in expansion of macro ‘nvrtcGetTARGET’
+     NVRTC_SAFE_CALL(nvrtcGetTARGET(prog, target));
+                     ^~~~~~~~~~~~~~
+<command-line>:0:16: note: suggested alternative: ‘nvrtcGetPTX’
+/home/cbica/anaconda3/envs/dk/lib/python3.8/site-packages/keopscore/include/utils_pe.h:6:26: note: in definition of macro ‘NVRTC_SAFE_CALL’
+     nvrtcResult result = x;                                       \
+                          ^
+/home/cbica/anaconda3/envs/dk/lib/python3.8/site-packages/keopscore/binders/nvrtc/nvrtc_jit.cpp:93:21: note: in expansion of macro ‘nvrtcGetTARGET’
+     NVRTC_SAFE_CALL(nvrtcGetTARGET(prog, target));
+                     ^~~~~~~~~~~~~~
+
+OK
+Loading data from ./data/subjectsamples_longclean_dl_hmuse_allstudies.csv
+Loaded 3082 subjects
+Loading train IDs from ./data/train_subject_allstudies_ids_dl_hmuse0.pkl
+Loading test IDs from ./data/test_subject_allstudies_ids_dl_hmuse0.pkl
+Train IDs: 2465
+Test IDs: 617
+Train data shape: (8964,)
+Test data shape: (2315,)
+Processed Train Data: torch.Size([8964, 151])
+Processed Test Data: torch.Size([2315, 151])
+Final shapes - Train Y: torch.Size([8964]) Test Y: torch.Size([2315])
+depth [(151, 75)]
+final layer (151, 75)
+Final Layer 151 75
+Training for 200 iterations...
+Iteration 50/200 - Loss: 0.694
+Iteration 100/200 - Loss: 0.645
+Iteration 150/200 - Loss: 0.653
+Iteration 200/200 - Loss: 0.654
+
+Results for ROI 30:
+MAE: 0.3082
+MSE: 0.2010
+RMSE: 0.4483
+R²: 0.8089
+Coverage: 0.9572
+Interval Width: 2.0210
+
+Model and results saved to ./models
+Training completed in 13.74 seconds

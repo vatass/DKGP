@@ -15,7 +15,7 @@ ROI_IDX=$1
 # Configuration - Update these paths as needed
 DATA_FILE="/home/cbica/Desktop/LongGPClustering/data1/subjectsamples_longclean_hmuse_allstudies.csv"
 TEST_IDS_FILE="/home/cbica/Desktop/LongGPClustering/data1/test_subject_allstudies_ids_dl_hmuse0.pkl"
-MODEL_FILE="./output/population_deep_kernel_gp_${ROI_IDX}.pth"
+MODEL_FILE="./models/population_deep_kernel_gp_MUSE_${ROI_IDX}.pth"
 OUTPUT_FILE="./inference_results/inference_results_roi_${ROI_IDX}.csv"
 GPU_ID=0
 

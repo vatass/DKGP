@@ -1,0 +1,15 @@
+{
+  "hmuse_version": 0,
+  "gpu_id": 0,
+  "data_file": "./data/subjectsamples_longclean_dl_hmuse_allstudies.csv",
+  "train_ids_file": "./data/train_subject_allstudies_ids_dl_hmuse0.pkl",
+  "test_ids_file": "./data/test_subject_allstudies_ids_dl_hmuse0.pkl",
+  "output_dir": "./models",
+  "log_dir": "./logs_hmuse$",
+  "total_rois": 145,
+  "successful": 145,
+  "failed": 0,
+  "success_rate": 100,
+  "start_time": "Thu Aug 28 11:13:46 EDT 2025",
+  "end_time": "Thu Aug 28 13:08:55 EDT 2025"
+}

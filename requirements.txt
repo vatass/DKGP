@@ -1,0 +1,11 @@
+# Core dependencies for Deep Kernel Gaussian Process (DKGP) model
+torch>=1.10.0
+gpytorch>=1.6.0
+pandas>=1.1.0
+numpy>=1.19.0
+scikit-learn>=0.24.0
+scipy>=1.5.0
+
+# Optional: for better performance
+# torchvision>=0.11.0  # Only if you need vision features
+# torchaudio>=0.10.0   # Only if you need audio features

@@ -8,12 +8,20 @@ import numpy as np
 ##### LOAD AND SAVE MODEL FUNCTIONS #### 
 
 # Save the model state dictionary and the optimizer state and the data 
-def save_model(model, optimizer, likelihood, filename="model_state.pth"):
-    torch.save({
+def save_model(model, optimizer, likelihood, filename="model_state.pth", train_x=None, train_y=None):
+    save_dict = {
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'likelihood_state_dict': likelihood.state_dict()
-    }, filename)
+    }
+    
+    # Add training data if provided
+    if train_x is not None:
+        save_dict['train_x'] = train_x
+    if train_y is not None:
+        save_dict['train_y'] = train_y
+    
+    torch.save(save_dict, filename)
 
 
 # Load the model, optimizer, and likelihood from the saved file

@@ -1,0 +1,18 @@
+name: dkgp
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8
+  - pytorch>=1.10.0
+  - torchvision>=0.11.0
+  - torchaudio>=0.10.0
+  - gpytorch>=1.6.0
+  - pandas>=1.1.0
+  - numpy>=1.19.0
+  - scikit-learn>=0.24.0
+  - scipy>=1.5.0
+  - pip
+  - pip:
+    - gpytorch>=1.6.0 

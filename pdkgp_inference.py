@@ -61,12 +61,18 @@ checkpoint = torch.load(model_file, map_location=f'cuda:{gpu_id}' if torch.cuda.
 model_state_dict = checkpoint['model_state_dict']
 optimizer_state_dict = checkpoint['optimizer_state_dict']
 likelihood_state_dict = checkpoint['likelihood_state_dict']
-train_x = checkpoint['train_x']
-train_y = checkpoint['train_y']
 
-print(f"Model loaded successfully")
-print(f"Training data shape: {train_x.shape}")
-print(f"Training targets shape: {train_y.shape}")
+# Check if training data is available in checkpoint
+if 'train_x' in checkpoint and 'train_y' in checkpoint:
+    train_x = checkpoint['train_x']
+    train_y = checkpoint['train_y']
+    print(f"Model loaded successfully with training data")
+    print(f"Training data shape: {train_x.shape}")
+    print(f"Training targets shape: {train_y.shape}")
+else:
+    print("Error: Training data not found in checkpoint. This model was not saved with training data.")
+    print("Please retrain the model using the updated training script.")
+    exit(1)
 
 # Initialize model components
 likelihood = gpytorch.likelihoods.GaussianLikelihood()
@@ -171,38 +177,45 @@ print(f"R²: {r2:.4f}")
 print(f"Coverage: {np.mean(coverage):.4f}")
 print(f"Interval Width: {mean_interval_width:.4f}")
 
-# Prepare results for CSV
-results_data = {
-    'subject_id': corresponding_test_ids,
-    'time_point': test_x_np[:, -1].tolist(),  # Assuming last column is time
-    'true_value': test_y_np.tolist(),
-    'predicted_value': mean_np.tolist(),
-    'variance': variance_np.tolist(),
-    'lower_bound': lower_np.tolist(),
-    'upper_bound': upper_np.tolist(),
-    'coverage': coverage.tolist(),
-    'interval_width': interval_width.tolist(),
-    'roi_idx': [roi_idx] * len(corresponding_test_ids)
-}
+# Extract time information from the last feature of input data
+time_values = test_x_np[:, -1]  # Last feature is time
 
-# Create DataFrame and save to CSV
-results_df = pd.DataFrame(results_data)
+# Save results
+results_df = pd.DataFrame({
+    'PTID': corresponding_test_ids,
+    'time': time_values,  # Add time information
+    'true_value': test_y_np,
+    'predicted_value': mean_np,
+    'variance': variance_np,
+    'lower_bound': lower_np,
+    'upper_bound': upper_np,
+    'coverage': coverage,
+    'interval_width': interval_width
+})
+
+# Add metrics to results
+results_df['mae'] = mae
+results_df['mse'] = mse
+results_df['rmse'] = rmse
+results_df['r2'] = r2
+results_df['mean_coverage'] = mean_coverage
+results_df['mean_interval_width'] = mean_interval_width
+results_df['roi_idx'] = roi_idx
+
+# Save to CSV
 results_df.to_csv(output_file, index=False)
-
-print(f"\nResults saved to: {output_file}")
-print(f"Total predictions: {len(results_df)}")
+print(f"Results saved to: {output_file}")
 
 # Save summary metrics
 summary_metrics = {
     'roi_idx': roi_idx,
-    'mae': mae,
-    'mse': mse,
-    'rmse': rmse,
-    'r2': r2,
-    'coverage': float(np.mean(coverage)),
+    'mae': float(mae),
+    'mse': float(mse),
+    'rmse': float(rmse),
+    'r2': float(r2),
+    'coverage': float(mean_coverage),
     'interval_width': float(mean_interval_width),
-    'num_predictions': len(results_df),
-    'num_subjects': len(set(corresponding_test_ids))
+    'n_test_samples': len(test_y_np)
 }
 
 summary_file = output_file.replace('.csv', '_summary.json')

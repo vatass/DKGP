@@ -23,7 +23,7 @@ parser.add_argument("--data_file", help="Path to the data CSV file", required=Tr
 parser.add_argument("--train_ids_file", help="Path to the train IDs pickle file", required=True)
 parser.add_argument("--test_ids_file", help="Path to the test IDs pickle file", required=True)
 parser.add_argument("--roi_idx", help="ROI index to train on", type=int, required=True)
-parser.add_argument("--output_dir", help="Directory to save model outputs", default="./output")
+parser.add_argument("--output_dir", help="Directory to save model outputs", default="./models")
 parser.add_argument("--gpu_id", help="GPU ID to use", type=int, default=0)
 
 t0 = time.time()
@@ -197,14 +197,14 @@ save_model(deepkernelmodel, optimizer, likelihood, filename=model_filename, trai
 
 # Save results
 results = {
-    'roi_idx': roi_idx,
-    'mae': mae_pop,
-    'mse': mse_pop,
-    'rmse': rmse_pop,
-    'r2': rsq,
+    'roi_idx': int(roi_idx),
+    'mae': float(mae_pop),
+    'mse': float(mse_pop),
+    'rmse': float(rmse_pop),
+    'r2': float(rsq),
     'coverage': float(np.mean(coverage)),
     'interval_width': float(mean_interval_width),
-    'training_time': time.time() - t0
+    'training_time': float(time.time() - t0)
 }
 
 results_filename = os.path.join(output_dir, f'results_roi_{roi_idx}.json')
