@@ -18,7 +18,7 @@ The DKGP model combines deep neural networks with Gaussian Processes to provide:
 **Option A: Automated Setup (Recommended)**
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone git@github.com:vatass/DKGP.git
 cd DKGP
 
 # Run the automated setup script
