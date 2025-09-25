@@ -1,55 +1,59 @@
-# Large data files that exceed GitHub's file size limits
-data/subjectsamples_longclean_dl_hmuse_allstudies.csv
-data/subjectsamples_longclean_dl_muse_allstudies.csv
-data/istaging_with_dl_muse_harmonized_new_version.csv
+# Allow only Python, Markdown, and Shell script files
+# Block everything else by default
 
-# Other large data files that might be added
-data/*.csv
-data/*.pkl
+# Allow specific file types
+!*.py
+!*.md
+!*.sh
+!*.yml
+!*.yaml
+!*.json
+!*.txt
+!*.gitignore
 
-# Model files (can be large)
-models/*.pth
-models_spare/*.pth
-models_cognitive/*/*.pth
+# Block all other file types
+*
+!*/
 
-# Log files
-logs_*/
-*.log
+# Re-allow the specific file types we want
+!*.py
+!*.md
+!*.sh
+!*.yml
+!*.yaml
+!*.json
+!*.txt
+!*.gitignore
 
-# Python cache
+# Block specific directories that should never be tracked
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
 *.so
-
-# Jupyter Notebook checkpoints
 .ipynb_checkpoints/
-
-# Virtual environment
 venv/
 env/
 ENV/
-
-# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS files
 .DS_Store
 Thumbs.db
-
-# Temporary files
 *.tmp
 *.temp
 *~
 
-# Results and output directories (optional - uncomment if you don't want to track results)
-# future_inference_results/
-# evaluation_results_*/
-# inference_results_*/
-# population_demographics_results/
-# trajectory_plots/
+# Block large data and model files specifically
+data/
+models/
+models_*/
+logs_*/
+evaluation_results_*/
+inference_results_*/
+future_inference_results/
+population_demographics_results/
+trajectory_plots/
+hippocampus_analysis/
