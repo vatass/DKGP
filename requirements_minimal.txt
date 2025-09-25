@@ -1,0 +1,22 @@
+# Core dependencies for DKGP inference
+# Updated with working versions from successful installation
+
+# Core ML libraries
+torch>=2.4.1
+gpytorch>=1.13
+numpy>=1.24.4
+pandas>=2.0.3
+scikit-learn>=1.3.2
+
+# Visualization
+matplotlib>=3.7.5
+seaborn>=0.13.2
+
+# Additional dependencies (automatically installed with above)
+# These are included for completeness but will be auto-installed:
+# pytz, python-dateutil, tzdata, scipy, joblib, threadpoolctl
+# contourpy, packaging, pillow, importlib-resources, pyparsing
+# fonttools, cycler, kiwisolver, six, MarkupSafe, jinja2
+# mpmath, sympy, typeguard, jaxtyping, linear-operator
+# filelock, fsspec, networkx, typing-extensions
+# nvidia-* (CUDA libraries for GPU support)
