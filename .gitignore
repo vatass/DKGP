@@ -61,3 +61,26 @@ hippocampus_analysis/
 # Remove specific result directories
 population_demographics_results/
 evaluation_results_hmuse0/
+
+# Output directory for inference results
+output/
+
+# Plot directories (keep locally but don't track in Git)
+trajectory_plots/
+validation_plots/
+single_subject_plots/
+
+# Additional result and log directories
+future_inference_results/
+evaluation_results_*/
+inference_results*/
+logs_*/
+population_demographics_results/
+
+# Python cache
+__pycache__/
+
+# Temporary files
+*.tmp
+*.temp
+*~
