@@ -70,7 +70,7 @@ class TrajectoryVisualizer:
         
         return df, summary
     
-    def plot_individual_trajectories(self, df, model_info, n_subjects=50):
+    def plot_individual_trajectories(self, df, model_info, n_subjects=5):
         """Plot individual subject trajectories"""
         fig, ax = plt.subplots(figsize=(12, 8))
         
@@ -85,7 +85,7 @@ class TrajectoryVisualizer:
         for subject in sampled_subjects:
             subject_data = df[df['PTID'] == subject].sort_values('time_months')
             ax.plot(subject_data['time_months'], subject_data['predicted_value'], 
-                   alpha=0.3, linewidth=0.8, color=model_info['color'])
+                   alpha=0.8, linewidth=2, color=model_info['color'])
         
         # Plot mean trajectory with confidence interval
         mean_trajectory = df.groupby('time_months').agg({

@@ -1,5 +1,5 @@
 '''
-DKGP Future Time Point Inference
+DKGP Inference
 Predict biomarker values at future time points (8 years ahead, every 12 months)
 '''
 

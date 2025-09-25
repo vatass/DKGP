@@ -10,7 +10,7 @@ OUTPUT_DIR="./future_inference_results"
 # Create output directory
 mkdir -p $OUTPUT_DIR
 
-echo "Starting Future Time Point Inference..."
+echo "Starting Trajectory Prediction for the Selected Biomarker..."
 echo "Output directory: $OUTPUT_DIR"
 
 # Function to run inference for a specific model
