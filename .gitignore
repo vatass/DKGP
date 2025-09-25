@@ -57,3 +57,7 @@ future_inference_results/
 population_demographics_results/
 trajectory_plots/
 hippocampus_analysis/
+
+# Remove specific result directories
+population_demographics_results/
+evaluation_results_hmuse0/
