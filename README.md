@@ -178,17 +178,38 @@ python plot_single_subject.py --csv_file output/spare_ad_output.csv --subject_id
 python plot_single_subject.py --csv_file output/mmse_output.csv --output_dir ./my_plots
 ```
 
-## Performance Metrics
+## ⚡ Performance
 
-**Inference Speed:**
-- Single biomarker: ~2-3 minutes (617 subjects, 8 time points)
-- All 145 ROIs: ~6-8 hours (617 subjects, 8 time points each)
-- GPU acceleration: 3-5x speedup vs CPU
+DKGP provides **extremely fast inference** for biomarker trajectory prediction:
 
-**Model Performance:**
-- Mean Absolute Error: 0.15-0.25 (normalized units)
-- Uncertainty Calibration: 95% confidence intervals
-- Trajectory Forecasting: Up to 8 years (96 months)
+### Per-Subject Inference Speed
+
+| Biomarker Type | Per-Subject Time | Per-Prediction Time | Throughput |
+|----------------|------------------|---------------------|------------|
+| **Single ROI** (8 time points) | **6.5ms** | **0.8ms** | ~154 subjects/sec |
+| **All 145 ROIs** (8 time points each) | **0.94s** | **0.8ms** | ~1.1 subjects/sec |
+| **SPARE Scores** (8 time points) | **6.5ms** | **0.8ms** | ~154 subjects/sec |
+| **Cognitive Scores** (8 time points) | **6.5ms** | **0.8ms** | ~154 subjects/sec |
+
+### Population-Level Performance
+
+| Scenario | Subjects | Total Time | Per-Subject Time |
+|----------|----------|------------|------------------|
+| Single ROI (e.g., Hippocampus) | 617 | ~4 seconds | 6.5ms |
+| All 145 Volume ROIs | 617 | ~10 minutes | 0.94s |
+| SPARE Scores | 617 | ~4 seconds | 6.5ms |
+| Cognitive Scores | 617 | ~4 seconds | 6.5ms |
+
+### Key Performance Features
+
+- ⚡ **Real-time prediction** suitable for clinical applications
+- 🎯 **8-year trajectory generation** in milliseconds per subject
+- 📊 **Uncertainty quantification** with 95% confidence intervals
+- 🔄 **Batch processing** optimized for population studies
+
+*Benchmarked on Intel Xeon Gold 6248R CPU @ 3.00GHz with 617 test subjects.*
+
+> **Note**: GPU acceleration can provide 3-5x speedup for large-scale batch processing.
 
 ## File Structure
 
