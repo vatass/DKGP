@@ -1,6 +1,6 @@
 # Deep Kernel Gaussian Process (DKGP) for Population Modeling
 
-This repository contains a production-ready implementation of Deep Kernel Gaussian Process models for population-level temporal data analysis, specifically designed for medical imaging applications and biomarker trajectory prediction.
+This repository contains a production-ready implementation of Deep Kernel Gaussian Process models for population-level temporal data analysis, specifically designed for medical imaging applications and biomarker trajectory prediction. This code will be used, with modifications, for the integration of the models to NiChart platform (https://neuroimagingchart.com/). 
 
 ## Overview
 
@@ -92,19 +92,19 @@ source dkgp-venv/bin/activate
 ### Supported Biomarkers
 
 **Volume ROIs:**
-- `hippocampus_right` (ROI 14) - Right Hippocampus
-- `hippocampus_left` (ROI 15) - Left Hippocampus  
-- `ventricle_right` (ROI 16) - Right Lateral Ventricle
-- `ventricle_left` (ROI 17) - Left Lateral Ventricle
+- `hippocampus_right` (Index 14) - Right Hippocampus
+- `hippocampus_left` (Index 15) - Left Hippocampus  
+- `ventricle_right` (Index 16) - Right Lateral Ventricle
+- `ventricle_left` (Index 17) - Left Lateral Ventricle
 - `volume_rois` - All 145 Volume ROIs (single CSV output)
 
 **SPARE Scores:**
-- `spare_ad` (ROI 0) - SPARE-AD Score
-- `spare_ba` (ROI 1) - SPARE-BA Score
+- `spare_ad` (Index 0) - SPARE-AD Score
+- `spare_ba` (Index 1) - SPARE-BA Score
 
 **Cognitive Scores:**
-- `mmse` (ROI 0) - MMSE Cognitive Score
-- `adas` (ROI 0) - ADAS Cognitive Score
+- `mmse` (Index 0) - MMSE Cognitive Score
+- `adas` (Index 0) - ADAS Cognitive Score
 
 **Combined Options:**
 - `all` - Run inference for all individual biomarkers
