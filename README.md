@@ -274,14 +274,16 @@ If you encounter issues:
 If you use this code in your research, please cite:
 
 ```bibtex
-@article{dkgp2024,
-  title={Deep Kernel Gaussian Process for Population Modeling},
-  author={Your Name},
-  journal={Your Journal},
-  year={2024}
+@article{tassopoulouadaptive,
+  title={Adaptive Shrinkage Estimation for Personalized Deep Kernel Regression in Modeling Brain Trajectories},
+  author={Tassopoulou, Vasiliki and Shou, Haochang and Davatzikos, Christos}
+}
+@inproceedings{tassopoulou2022deep,
+  title={Deep kernel learning with temporal gaussian processes for clinical variable prediction in alzheimer’s disease},
+  author={Tassopoulou, Vasiliki and Yu, Fanyang and Davatzikos, Christos},
+  booktitle={Machine Learning for Health},
+  pages={539--551},
+  year={2022},
+  organization={PMLR}
 }
 ```
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
