@@ -1,6 +1,6 @@
 # Deep Kernel Gaussian Process (DKGP) for Population Modeling
 
-This repository contains a production-ready implementation of Deep Kernel Gaussian Process models for population-level temporal data analysis, specifically designed for medical imaging applications and biomarker trajectory prediction. This code will be used, with modifications, for the integration of the models to NiChart platform (https://neuroimagingchart.com/). 
+This repository contains a production-ready implementation of Deep Kernel Gaussian Process models for population-level temporal data analysis, specifically designed for medical imaging applications and biomarker trajectory prediction. This code will be used for the integration of the models to NiChart platform (https://neuroimagingchart.com/). 
 
 ## Overview
 
