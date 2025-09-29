@@ -185,7 +185,7 @@ case "$1" in
         run_inference \
             "Right Hippocampus" \
             "./models/population_deep_kernel_gp_MUSE_14.pth" \
-            "./data/subjectsamples_longclean_dl_hmuse_allstudies.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
             "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             14 \
             "hippocampus_right"
@@ -195,7 +195,7 @@ case "$1" in
         run_inference \
             "Left Hippocampus" \
             "./models/population_deep_kernel_gp_MUSE_15.pth" \
-            "./data/subjectsamples_longclean_dl_hmuse_allstudies.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
             "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             15 \
             "hippocampus_left"
@@ -206,7 +206,7 @@ case "$1" in
         run_inference \
             "Right Lateral Ventricle" \
             "./models/population_deep_kernel_gp_MUSE_16.pth" \
-            "./data/subjectsamples_longclean_dl_hmuse_allstudies.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
             "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             16 \
             "lateral_ventricle_right"
@@ -216,7 +216,7 @@ case "$1" in
         run_inference \
             "Left Lateral Ventricle" \
             "./models/population_deep_kernel_gp_MUSE_17.pth" \
-            "./data/subjectsamples_longclean_dl_hmuse_allstudies.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
             "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             17 \
             "lateral_ventricle_left"
