@@ -83,7 +83,7 @@ run_inference_all_rois() {
         
         run_inference \
             "Volume ROI $roi_idx" \
-            "./models/population_deep_kernel_gp_MUSE_${roi_idx}.pth" \
+            "./models/population_deep_kernel_gp_${roi_idx}.pth" \
             "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
             "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             $roi_idx \
