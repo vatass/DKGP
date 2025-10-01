@@ -96,6 +96,10 @@ if torch.cuda.is_available():
 
 print('Processed Train Data:', train_x.shape)
 print('Processed Test Data:', test_x.shape)
+print("\n=== FEATURE VERIFICATION ===")
+print(f"Number of features in training data: {train_x.shape[1]}")
+print("Expected: 149 (from dl_muse data file)")
+print("=== END VERIFICATION ===\n")
 
 # Select ROI
 test_y = test_y[:, roi_idx]

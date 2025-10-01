@@ -8,7 +8,7 @@ HMUSE_VERSION=${1:-0}  # Default to hmuse0
 GPU_ID=${2:-0}         # Default GPU ID
 
 # Configuration - Update these paths as needed
-DATA_FILE="./data/subjectsamples_longclean_dl_hmuse_allstudies.csv"
+DATA_FILE="./data/subjectsamples_longclean_dl_muse_allstudies.csv"
 TRAIN_IDS_FILE="./data/train_subject_allstudies_ids_dl_hmuse${HMUSE_VERSION}.pkl"
 TEST_IDS_FILE="./data/test_subject_allstudies_ids_dl_hmuse${HMUSE_VERSION}.pkl"
 OUTPUT_DIR="./models"
