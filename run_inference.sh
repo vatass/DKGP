@@ -124,7 +124,7 @@ first_df = pd.read_csv(csv_files[0])
 print(f'First file columns: {list(first_df.columns)}')
 
 # Initialize combined dataframe with PTID and Time from first file
-combined_df = first_df[['PTID', 'Time']].copy()
+combined_df = first_df[['PTID', 'time_months']].copy()
 
 # Add each ROI column
 for i, csv_file in enumerate(csv_files):
@@ -132,7 +132,7 @@ for i, csv_file in enumerate(csv_files):
     roi_idx = os.path.basename(csv_file).split('_')[1]
     
     # Get the biomarker column (should be the last column)
-    biomarker_col = [col for col in df.columns if col not in ['PTID', 'Time']][0]
+    biomarker_col = [col for col in df.columns if col not in ['PTID', 'time_months']][0]
     
     # Rename to DL_MUSE_{roi_idx}
     new_col_name = f'DL_MUSE_{roi_idx}'
