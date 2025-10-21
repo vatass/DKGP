@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+Preprocessing pipeline for biomarker inference.
+
+This script normalizes imaging, demographic, and clinical features using
+precomputed statistics stored in .pkl files. It outputs a CSV file
+with preserved column names and order, ready for inference.
+"""
 
 import argparse
 import pandas as pd
@@ -6,10 +13,10 @@ import pickle
 import numpy as np
 import os
 
-# ------------------- Parser Setup -------------------
-parser = argparse.ArgumentParser(description='Preprocessing pipeline for the input data. From the csv format to the array format for inference')
-parser.add_argument("--data_file", help="Path to the data CSV file", required=True)
-parser.add_argument("--biomarker", help="Biomarker to preprocess", required=True)
+# ------------------- Parser -------------------
+parser = argparse.ArgumentParser(description='Preprocess data for biomarker inference')
+parser.add_argument("--data_file", required=True, help="Path to the data CSV file")
+parser.add_argument("--biomarker", required=True, help="Biomarker to preprocess (MUSE, SPARE_AD, SPARE_BA, MMSE, ADAS)")
 args = parser.parse_args()
 
 data_file = args.data_file
@@ -17,9 +24,10 @@ biomarker = args.biomarker.upper()
 
 # ------------------- Load Data -------------------
 data = pd.read_csv(data_file)
-print(f"Loaded data with shape: {data.shape}")
+print(f"\n✅ Loaded data: {data.shape[0]} subjects × {data.shape[1]} columns")
 
-# ------------------- Common Preprocessing Functions -------------------
+
+# ------------------- Helpers -------------------
 def normalize_column(col, mean, std):
     return (col - mean) / std
 
@@ -29,75 +37,101 @@ def binarize_sex(sex_col):
 def encode_diagnosis(dx_col):
     return dx_col.map({'CN': 0, 'MCI': 1, 'AD': 2})
 
-# ------------------- Biomarker-Specific Configs -------------------
-stats_dir = './statistics'
-
-def load_stats(path):
+def load_pickle(path):
     with open(path, 'rb') as f:
         return pickle.load(f)
 
-if biomarker == 'MUSE':
-    roi_stats = load_stats(os.path.join(stats_dir, 'dlmuse_rois_mean_std_dlmuse.pkl'))
-    age_stats = load_stats(os.path.join(stats_dir, 'age_stats.pkl'))
+def unpack_stats(obj, name):
+    """Unpack stats whether stored as dict or list."""
+    if isinstance(obj, dict):
+        return obj['mean'], obj['std']
+    elif isinstance(obj, list) and len(obj) == 2:
+        return obj[0], obj[1]
+    else:
+        raise ValueError(f"❌ Unexpected format for {name} stats.")
 
-elif biomarker == 'SPARE_AD' or biomarker == 'SPARE_BA':
-    roi_stats = load_stats(os.path.join(stats_dir, 'dlmuse_rois_mean_std_spare.pkl'))
-    age_stats = load_stats(os.path.join(stats_dir, 'age_mean_std_spare.pkl'))
-    spare_ba_stats = load_stats(os.path.join(stats_dir, 'spare_ba_mean_std.pkl'))
+# ------------------- Biomarker Config -------------------
+stats_dir = './statistics'
+
+if biomarker == 'MUSE':
+    roi_stats_path = os.path.join(stats_dir, 'dlmuse_rois_mean_std.pkl')
+    age_stats_path = os.path.join(stats_dir, 'age_stats_dlmuse.pkl')
+
+elif biomarker in ['SPARE_AD', 'SPARE_BA']:
+    roi_stats_path = os.path.join(stats_dir, 'dlmuse_rois_mean_std_spare.pkl')
+    age_stats_path = os.path.join(stats_dir, 'age_mean_std_spare.pkl')
+    spare_ba_stats_path = os.path.join(stats_dir, 'spare_ba_mean_std.pkl')
 
 elif biomarker == 'MMSE':
-    roi_stats = load_stats(os.path.join(stats_dir, 'dlmuse_rois_mean_std_mmse.pkl'))
-    age_stats = load_stats(os.path.join(stats_dir, 'age_mean_std_mmse.pkl'))
-    spare_ba_stats = load_stats(os.path.join(stats_dir, 'spare_ba_mean_std_mmse.pkl'))
-    mmse_stats = load_stats(os.path.join(stats_dir, 'mmse_mean_std.pkl'))
+    roi_stats_path = os.path.join(stats_dir, 'dlmuse_rois_mean_std_mmse.pkl')
+    age_stats_path = os.path.join(stats_dir, 'age_mean_std_mmse.pkl')
+    spare_ba_stats_path = os.path.join(stats_dir, 'spare_ba_mean_std_mmse.pkl')
+    mmse_stats_path = os.path.join(stats_dir, 'mmse_mean_std.pkl')
 
 elif biomarker == 'ADAS':
-    roi_stats = load_stats(os.path.join(stats_dir, 'dlmuse_rois_mean_std_adas.pkl'))
-    age_stats = load_stats(os.path.join(stats_dir, 'age_mean_std_adas.pkl'))
-    spare_ba_stats = load_stats(os.path.join(stats_dir, 'spare_ba_mean_std_adas.pkl'))
-    adas_stats = load_stats(os.path.join(stats_dir, 'adas_mean_std.pkl'))
+    roi_stats_path = os.path.join(stats_dir, 'dlmuse_rois_mean_std_adas.pkl')
+    age_stats_path = os.path.join(stats_dir, 'age_mean_std_adas.pkl')
+    spare_ba_stats_path = os.path.join(stats_dir, 'spare_ba_mean_std_adas.pkl')
+    adas_stats_path = os.path.join(stats_dir, 'adas_mean_std.pkl')
 
 else:
-    raise ValueError(f"Unsupported biomarker: {biomarker}")
+    raise ValueError(f"❌ Unsupported biomarker: {biomarker}")
 
-# ------------------- Preprocessing Steps -------------------
-# Normalize ROIs
-roi_cols = [col for col in data.columns if 'DL_MUSE' in col]
-data[roi_cols] = (data[roi_cols] - roi_stats['mean']) / roi_stats['std']
-print(f"Normalized {len(roi_cols)} ROI columns")
+# ------------------- Load Stats -------------------
+roi_stats = load_pickle(roi_stats_path)
+roi_mean = roi_stats['mean']
+roi_std = roi_stats['std']
+print(f"📊 Loaded ROI stats with {len(roi_mean)} entries")
 
-# Encode Diagnosis
-if 'Diagnosis' in data.columns:
-    data['Diagnosis'] = encode_diagnosis(data['Diagnosis'])
-    print("Encoded Diagnosis")
+age_stats = load_pickle(age_stats_path)
+age_mean, age_std = unpack_stats(age_stats, "Age")
 
-# Normalize Age
-if 'Age' in data.columns:
-    data['Age'] = normalize_column(data['Age'], age_stats['mean'], age_stats['std'])
-    print("Normalized Age")
+# ------------------- ROI Normalization -------------------
+roi_cols = [col for col in data.columns if col in roi_mean]
+print(f"🔍 Found {len(roi_cols)} ROI columns to normalize")
 
-# Binarize Sex
+for col in roi_cols:
+    data[col] = (data[col] - roi_mean[col]) / roi_std[col]
+
+print(f"✅ Normalized {len(roi_cols)} ROI columns")
+
+# ------------------- Demographic Normalization -------------------
+if 'Diagnosis_nearest_2.0' in data.columns:
+    data['Diagnosis_nearest_2.0'] = encode_diagnosis(data['Diagnosis_nearest_2.0'])
+    print("✅ Encoded Diagnosis (CN=0, MCI=1, AD=2)")
+
 if 'Sex' in data.columns:
     data['Sex'] = binarize_sex(data['Sex'])
-    print("Binarized Sex")
+    print("✅ Binarized Sex (F=1, M=0)")
 
-# Normalize biomarker if applicable
-if biomarker == 'SPARE_BA' or biomarker == 'SPARE_AD' or biomarker in ['MMSE', 'ADAS']:
+if 'Age' in data.columns:
+    data['Age'] = normalize_column(data['Age'], age_mean, age_std)
+    print("✅ Normalized Age")
+
+# ------------------- Biomarker-specific Normalization -------------------
+if biomarker in ['SPARE_AD', 'SPARE_BA', 'MMSE', 'ADAS']:
+    spare_ba_stats = load_pickle(spare_ba_stats_path)
+    spare_ba_mean, spare_ba_std = unpack_stats(spare_ba_stats, "SPARE_BA")
     if 'SPARE_BA' in data.columns:
-        data['SPARE_BA'] = normalize_column(data['SPARE_BA'], spare_ba_stats['mean'], spare_ba_stats['std'])
-        print("Normalized SPARE_BA")
+        data['SPARE_BA'] = normalize_column(data['SPARE_BA'], spare_ba_mean, spare_ba_std)
+        print("✅ Normalized SPARE_BA")
 
-if biomarker == 'MMSE':
-    if 'MMSE' in data.columns:
-        data['MMSE'] = normalize_column(data['MMSE'], mmse_stats['mean'], mmse_stats['std'])
-        print("Normalized MMSE")
+if biomarker == 'MMSE' and 'MMSE' in data.columns:
+    mmse_stats = load_pickle(mmse_stats_path)
+    mmse_mean, mmse_std = unpack_stats(mmse_stats, "MMSE")
+    data['MMSE'] = normalize_column(data['MMSE'], mmse_mean, mmse_std)
+    print("✅ Normalized MMSE")
 
-if biomarker == 'ADAS':
-    if 'ADAS' in data.columns:
-        data['ADAS'] = normalize_column(data['ADAS'], adas_stats['mean'], adas_stats['std'])
-        print("Normalized ADAS")
+if biomarker == 'ADAS' and 'ADAS' in data.columns:
+    adas_stats = load_pickle(adas_stats_path)
+    adas_mean, adas_std = unpack_stats(adas_stats, "ADAS")
+    data['ADAS'] = normalize_column(data['ADAS'], adas_mean, adas_std)
+    print("✅ Normalized ADAS")
 
-# ------------------- Save Preprocessed Output -------------------
-output_path = data_file.replace('.csv', '_preprocessed.npy')
-np.save(output_path, data.to_numpy(dtype=np.float32))
-print(f"Saved preprocessed data to {output_path}")
+# ------------------- Save Output -------------------
+output_path = data_file.replace('.csv', f'_preprocessed.csv')
+data.to_csv(output_path, index=False)
+print(f"\n💾 Saved preprocessed CSV with preserved column order to: {output_path}")
+print("✅ Preprocessing complete.\n")
+
+
