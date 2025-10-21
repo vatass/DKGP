@@ -1,0 +1,11 @@
+TASKS 
+
+1. Create the new dataset for the spare scores (Done)
+2. Store the statistics for all the biomarkers (Done)
+3. Retrain the spare models (Done)
+4. Fix the inference code so as to load the baseline data from each subject. (Done)
+5. Write the preprocessing script of the datasets. This will take as input the dataframe with the interpretable column names 
+and will normalize the imaging features, categorize the Diagnosis, Normalize the Age, binarize the Sex, normalize the SPARE and the cognitive measures. 
+and will store this dataset in order to be used as input on inference.
+
+5. Write the detailed email to Kyle with the statistics and the updates. 

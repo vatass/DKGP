@@ -19,13 +19,15 @@ run_inference() {
     local model_type=$1
     local model_file=$2
     local data_file=$3
-    local roi_idx=$4
-    local output_prefix=$5
+    local test_ids_file=$4
+    local roi_idx=$5
+    local output_prefix=$6
     
     echo ""
     echo "=== Running inference for $model_type (ROI $roi_idx) ==="
     echo "Model: $model_file"
     echo "Data: $data_file"
+    echo "Test IDs: $test_ids_file"
     
     # Check if model file exists
     if [ ! -f "$model_file" ]; then
@@ -38,11 +40,18 @@ run_inference() {
         echo "❌ Error: Data file not found: $data_file"
         return 1
     fi
-        
+    
+    # Check if test IDs file exists
+    if [ ! -f "$test_ids_file" ]; then
+        echo "❌ Error: Test IDs file not found: $test_ids_file"
+        return 1
+    fi
+    
     output_file="$OUTPUT_DIR/${output_prefix}_output.csv"
     
-    python pdkgp_future_inference.py \
+    python pdkgp_future_inference_backup.py \
         --data_file "$data_file" \
+        --test_ids_file "$test_ids_file" \
         --model_file "$model_file" \
         --roi_idx $roi_idx \
         --output_file "$output_file" \
@@ -75,7 +84,8 @@ run_inference_all_rois() {
         run_inference \
             "Volume ROI $roi_idx" \
             "./models/population_deep_kernel_gp_${roi_idx}.pth" \
-            "./data/data_dl_muse_nichart_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             $roi_idx \
             "temp_rois/roi_${roi_idx}"
         
@@ -175,7 +185,8 @@ case "$1" in
         run_inference \
             "Right Hippocampus" \
             "./models/population_deep_kernel_gp_14.pth" \
-            "./data/data_dl_muse_nichart_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             14 \
             "hippocampus_right"
         ;;
@@ -184,7 +195,8 @@ case "$1" in
         run_inference \
             "Left Hippocampus" \
             "./models/population_deep_kernel_gp_15.pth" \
-            "./data/data_dl_muse_nichart_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             15 \
             "hippocampus_left"
         ;;
@@ -194,7 +206,8 @@ case "$1" in
         run_inference \
             "Right Lateral Ventricle" \
             "./models/population_deep_kernel_gp_16.pth" \
-            "./data/data_dl_muse_nichart_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             16 \
             "lateral_ventricle_right"
         ;;
@@ -203,7 +216,8 @@ case "$1" in
         run_inference \
             "Left Lateral Ventricle" \
             "./models/population_deep_kernel_gp_17.pth" \
-            "./data/data_dl_muse_nichart_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             17 \
             "lateral_ventricle_left"
         ;;
@@ -213,7 +227,8 @@ case "$1" in
         run_inference \
             "SPARE-AD" \
             "./models_spare/population_deep_kernel_gp_0.pth" \
-            "./data/data_dl_muse_nichart_spare_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_spare_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_muse_spare0.pkl" \
             0 \
             "spare_ad"
         ;;
@@ -222,7 +237,8 @@ case "$1" in
         run_inference \
             "SPARE-BA" \
             "./models_spare/population_deep_kernel_gp_1.pth" \
-            "./data/data_dl_muse_nichart_spare_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_spare_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_muse_spare0.pkl" \
             1 \
             "spare_ba"
         ;;
@@ -232,7 +248,8 @@ case "$1" in
         run_inference \
             "MMSE" \
             "./models_cognitive/mmse/population_deep_kernel_gp_0.pth" \
-            "./data/data_dl_muse_nichart_mmse_test.csv" \
+            "./data/subjectsamples_longclean_mmse_dlmuse_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_mmse0.pkl" \
             0 \
             "mmse"
         ;;
@@ -241,7 +258,8 @@ case "$1" in
         run_inference \
             "ADAS" \
             "./models_cognitive/adas/population_deep_kernel_gp_0.pth" \
-            "./data/data_dl_muse_nichart_adas_test.csv" \
+            "./data/subjectsamples_longclean_dlmuse_adas_adni.csv" \
+            "./data/test_subject_adni_ids_adas0.pkl" \
             0 \
             "adas"
         ;;
@@ -259,7 +277,8 @@ case "$1" in
         run_inference \
             "Right Hippocampus" \
             "./models/population_deep_kernel_gp_14.pth" \
-            "./data/data_dl_muse_nichart_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             14 \
             "hippocampus_right"
         
@@ -267,7 +286,8 @@ case "$1" in
         run_inference \
             "Left Hippocampus" \
             "./models/population_deep_kernel_gp_15.pth" \
-            "./data/data_dl_muse_nichart_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             15 \
             "hippocampus_left"
         
@@ -275,7 +295,8 @@ case "$1" in
         run_inference \
             "Right Lateral Ventricle" \
             "./models/population_deep_kernel_gp_16.pth" \
-            "./data/data_dl_muse_nichart_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             16 \
             "lateral_ventricle_right"
         
@@ -283,7 +304,8 @@ case "$1" in
         run_inference \
             "Left Lateral Ventricle" \
             "./models/population_deep_kernel_gp_17.pth" \
-            "./data/data_dl_muse_nichart_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_hmuse0.pkl" \
             17 \
             "lateral_ventricle_left"
         
@@ -291,7 +313,8 @@ case "$1" in
         run_inference \
             "SPARE-AD" \
             "./models_spare/population_deep_kernel_gp_0.pth" \
-            "./data/data_dl_muse_nichart_spare_test.csv" \
+            "./data/subjectsamples_longclean_dl_muse_spare_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_muse_spare0.pkl" \
             0 \
             "spare_ad"
         
@@ -299,7 +322,8 @@ case "$1" in
         run_inference \
             "SPARE-BA" \
             "./models_spare/population_deep_kernel_gp_1.pth" \
-            "./data/data_dl_muse_nichart_spare.csv" \
+            "./data/subjectsamples_longclean_dl_muse_spare_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_dl_muse_spare0.pkl" \
             1 \
             "spare_ba"
         
@@ -307,7 +331,8 @@ case "$1" in
         run_inference \
             "MMSE" \
             "./models_cognitive/mmse/population_deep_kernel_gp_0.pth" \
-            "./data/data_dl_muse_nichart_mmse_test.csv" \
+            "./data/subjectsamples_longclean_mmse_dlmuse_allstudies.csv" \
+            "./data/test_subject_allstudies_ids_mmse0.pkl" \
             0 \
             "mmse"
         
@@ -315,7 +340,8 @@ case "$1" in
         run_inference \
             "ADAS" \
             "./models_cognitive/adas/population_deep_kernel_gp_0.pth" \
-            "./data/data_dl_muse_nichart_adas_test.csv" \
+            "./data/subjectsamples_longclean_dlmuse_adas_adni.csv" \
+            "./data/test_subject_adni_ids_adas0.pkl" \
             0 \
             "adas"
         ;;

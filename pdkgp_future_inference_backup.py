@@ -17,6 +17,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 parser = argparse.ArgumentParser(description='Future time point inference with trained DKGP model')
 parser.add_argument("--data_file", help="Path to the data CSV file", required=True)
+parser.add_argument("--test_ids_file", help="Path to the test IDs pickle file", required=True)
 parser.add_argument("--model_file", help="Path to the trained model file", required=True)
 parser.add_argument("--roi_idx", help="ROI index for inference", type=int, required=True)
 parser.add_argument("--output_file", help="Path to save inference results CSV", required=True)
@@ -28,21 +29,34 @@ args = parser.parse_args()
 gpu_id = args.gpu_id
 roi_idx = args.roi_idx
 data_file = args.data_file
+test_ids_file = args.test_ids_file
 model_file = args.model_file
 output_file = args.output_file
 
 # Define future time points (8 years = 96 months, every 12 months)
-future_timepoints = [0, 12, 24, 36, 48, 60, 72, 84, 96]
+future_timepoints = [12, 24, 36, 48, 60, 72, 84, 96]
 
 print(f"Starting future time point inference for ROI {roi_idx}")
 print(f"Future time points: {future_timepoints}")
 print(f"Loading data from: {data_file}")
+print(f"Loading test IDs from: {test_ids_file}")
 print(f"Loading model from: {model_file}")
 
 # Load data
 datasamples = pd.read_csv(data_file)
 print(f"Loaded data with {len(datasamples)} samples")
 
+# Load test IDs
+import pickle
+with open(test_ids_file, "rb") as openfile:
+    test_ids = []
+    while True:
+        try:
+            test_ids.append(pickle.load(openfile))
+        except EOFError:
+            break
+test_ids = test_ids[0]
+print(f"Loaded {len(test_ids)} test subject IDs")
 
 # Load model
 print("Loading trained model...")
@@ -100,35 +114,32 @@ likelihood.eval()
 
 # Get baseline data (time = 0) for test subjects
 print("Preparing baseline test data...")
+test_data = datasamples[datasamples['PTID'].isin(test_ids)]
 
-test_data = datasamples
+# Filter for baseline data (assuming time=0 is at baseline)
+# We'll extract baseline features and create future time points
+baseline_data = []
+baseline_ptids = []
 
-print('Columns: ', test_data.columns)
 
-# Keep the PTID column in a list and then remove it from the test_data
-baseline_ptids = test_data['PTID'].unique().tolist()
-test_data = test_data.drop(columns=['PTID'])
+for ptid in test_ids:
+    subject_data = test_data[test_data['PTID'] == ptid]
+    if len(subject_data) > 0:
+        # Get the first record (baseline) for this subject
+        # the baseline record would be total row for this subject. 
+        baseline_record = subject_data.iloc[0]
+        
+        # Parse the X array (features)
+        x_str = baseline_record['X']
+        x_array = np.array([float(i) for i in x_str.strip('][').split(', ')])
+        
+        baseline_data.append(x_array)
+        baseline_ptids.append(ptid)
 
-# remove any Unnamed columns
-test_data = test_data.loc[:, ~test_data.columns.str.contains('^Unnamed')]
-
-print('Test data: ', test_data.shape)
-
-print('Test data columns: ', test_data.columns)
-
-baseline_data = test_data.to_numpy(dtype=np.float32)
-
-print(f"Extracted baseline data for {len(baseline_data)} subjects")
+baseline_data = np.array(baseline_data)
+print(f"Extracted baseline data for {len(baseline_ptids)} subjects")
 print(f"Baseline feature shape: {baseline_data.shape}")
 
-print(type(baseline_data))
-
-# extract the last column of the test_data
-last_column = test_data.iloc[:, -1]
-print(f"Last column: {last_column}")
-print(f"Last column shape: {last_column.shape}")
-print(f"Last column type: {type(last_column)}")
-print(f"Last column values: {last_column.values}")
 
 # Create future time point data
 all_results = []
@@ -138,18 +149,15 @@ for time_point in future_timepoints:
     
     # Create future data by modifying the time component (last feature)
     future_data = baseline_data.copy()
-
-
-    print(f"Time point: {time_point}")
-
     future_data[:, -1] = time_point  # Set time to future time point
-    print(f"Future data: {future_data.shape}")
+    
     # Convert to tensor
     future_tensor = torch.Tensor(future_data)
     if torch.cuda.is_available():
         future_tensor = future_tensor.cuda(gpu_id)
     
     print(f"Future data shape: {future_tensor.shape}")
+    
     # Make predictions
     print(f"Making predictions for time point {time_point}...")
     with torch.no_grad(), gpytorch.settings.fast_pred_var():

@@ -96,9 +96,9 @@ if torch.cuda.is_available():
 
 print('Processed Train Data:', train_x.shape)
 print('Processed Test Data:', test_x.shape)
+
 print("\n=== FEATURE VERIFICATION ===")
 print(f"Number of features in training data: {train_x.shape[1]}")
-print("Expected: 149 (from dl_muse data file)")
 print("=== END VERIFICATION ===\n")
 
 # Select ROI
@@ -107,7 +107,7 @@ train_y = train_y[:, roi_idx]
 train_y = train_y.squeeze() 
 test_y = test_y.squeeze()
 
-print('Final shapes - Train Y:', train_y.shape, 'Test Y:', test_y.shape)
+
 
 # Define model with fixed architecture
 depth = [(train_x.shape[1], int(train_x.shape[1]/2))]
