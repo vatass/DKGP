@@ -75,7 +75,7 @@ run_inference_all_rois() {
         run_inference \
             "Volume ROI $roi_idx" \
             "./models/population_deep_kernel_gp_${roi_idx}.pth" \
-            "./data/data_dl_muse_nichart_test.csv" \
+            "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
             $roi_idx \
             "temp_rois/roi_${roi_idx}"
         
@@ -175,7 +175,7 @@ case "$1" in
         run_inference \
             "Right Hippocampus" \
             "./models/population_deep_kernel_gp_14.pth" \
-            "./data/data_dl_muse_nichart_test.csv" \
+            "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
             14 \
             "hippocampus_right"
         ;;
