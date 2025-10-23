@@ -24,6 +24,9 @@ biomarker = args.biomarker.upper()
 
 # ------------------- Load Data -------------------
 data = pd.read_csv(data_file)
+# remove any Unnamed columns
+data = data.loc[:, ~data.columns.str.contains('^Unnamed')]
+
 print(f"\n✅ Loaded data: {data.shape[0]} subjects × {data.shape[1]} columns")
 
 
@@ -131,6 +134,7 @@ if biomarker == 'ADAS' and 'ADAS' in data.columns:
 # ------------------- Save Output -------------------
 output_path = data_file.replace('.csv', f'_preprocessed.csv')
 data.to_csv(output_path, index=False)
+
 print(f"\n💾 Saved preprocessed CSV with preserved column order to: {output_path}")
 print("✅ Preprocessing complete.\n")
 

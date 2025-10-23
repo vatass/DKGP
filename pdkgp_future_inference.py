@@ -112,23 +112,10 @@ test_data = test_data.drop(columns=['PTID'])
 # remove any Unnamed columns
 test_data = test_data.loc[:, ~test_data.columns.str.contains('^Unnamed')]
 
-print('Test data: ', test_data.shape)
-
-print('Test data columns: ', test_data.columns)
-
 baseline_data = test_data.to_numpy(dtype=np.float32)
 
 print(f"Extracted baseline data for {len(baseline_data)} subjects")
 print(f"Baseline feature shape: {baseline_data.shape}")
-
-print(type(baseline_data))
-
-# extract the last column of the test_data
-last_column = test_data.iloc[:, -1]
-print(f"Last column: {last_column}")
-print(f"Last column shape: {last_column.shape}")
-print(f"Last column type: {type(last_column)}")
-print(f"Last column values: {last_column.values}")
 
 # Create future time point data
 all_results = []
