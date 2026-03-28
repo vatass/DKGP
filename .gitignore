@@ -79,11 +79,6 @@ logs_*/
 population_demographics_results/
 
 # Unused shell scripts (kept locally but not tracked in Git)
-preprocess_data.sh
-setup_environment.sh
-run_training_all_rois.sh
-run_training_cognitive_scores.sh
-run_training_spare_scores.sh
 run_inference_backup.sh
 run_complete_evaluation.sh
 
