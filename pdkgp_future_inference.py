@@ -126,7 +126,6 @@ for time_point in future_timepoints:
     # Create future data by modifying the time component (last feature)
     future_data = baseline_data.copy()
 
-
     print(f"Time point: {time_point}")
 
     future_data[:, -1] = time_point  # Set time to future time point
