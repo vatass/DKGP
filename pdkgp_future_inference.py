@@ -103,18 +103,30 @@ print("Preparing baseline test data...")
 
 test_data = datasamples
 
-print('Columns: ', test_data.columns)
-
-# Keep the PTID column in a list and then remove it from the test_data
-baseline_ptids = test_data['PTID'].unique().tolist()
-test_data = test_data.drop(columns=['PTID'])
-
 # remove any Unnamed columns
 test_data = test_data.loc[:, ~test_data.columns.str.contains('^Unnamed')]
 
-baseline_data = test_data.to_numpy(dtype=np.float32)
+print('Columns: ', test_data.columns)
 
-print(f"Extracted baseline data for {len(baseline_data)} subjects")
+# For each subject, extract only the first (baseline) row so that
+# baseline_ptids[i] and baseline_data[i] are guaranteed to correspond.
+# Taking all rows and indexing by enumerate(unique_ptids) breaks the
+# alignment whenever a subject has more than one row in the file.
+baseline_data = []
+baseline_ptids = []
+
+for ptid in test_data['PTID'].unique():
+    subject_data = test_data[test_data['PTID'] == ptid]
+    if len(subject_data) > 0:
+        # Get the first record (baseline, time = 0) for this subject
+        baseline_record = subject_data.iloc[0]
+        features = baseline_record.drop(labels=['PTID']).to_numpy(dtype=np.float32)
+        baseline_data.append(features)
+        baseline_ptids.append(ptid)
+
+baseline_data = np.array(baseline_data)
+
+print(f"Extracted baseline data for {len(baseline_ptids)} subjects")
 print(f"Baseline feature shape: {baseline_data.shape}")
 
 # Create future time point data
