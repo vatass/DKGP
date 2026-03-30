@@ -78,6 +78,10 @@ inference_results*/
 logs_*/
 population_demographics_results/
 
+# Unused shell scripts (kept locally but not tracked in Git)
+run_inference_backup.sh
+run_complete_evaluation.sh
+
 # Python cache
 __pycache__/
 
