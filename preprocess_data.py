@@ -118,18 +118,26 @@ if biomarker in ['SPARE_AD', 'SPARE_BA', 'MMSE', 'ADAS']:
     if 'SPARE_BA' in data.columns:
         data['SPARE_BA'] = normalize_column(data['SPARE_BA'], spare_ba_mean, spare_ba_std)
         print("✅ Normalized SPARE_BA")
+    else:
+        print(f"⚠️  SPARE_BA column not found in data — skipping normalization. Available columns: {list(data.columns)}")
 
-if biomarker == 'MMSE' and 'MMSE' in data.columns:
-    mmse_stats = load_pickle(mmse_stats_path)
-    mmse_mean, mmse_std = unpack_stats(mmse_stats, "MMSE")
-    data['MMSE'] = normalize_column(data['MMSE'], mmse_mean, mmse_std)
-    print("✅ Normalized MMSE")
+if biomarker == 'MMSE':
+    if 'MMSE' in data.columns:
+        mmse_stats = load_pickle(mmse_stats_path)
+        mmse_mean, mmse_std = unpack_stats(mmse_stats, "MMSE")
+        data['MMSE'] = normalize_column(data['MMSE'], mmse_mean, mmse_std)
+        print("✅ Normalized MMSE")
+    else:
+        print(f"⚠️  MMSE column not found in data — skipping normalization. Available columns: {list(data.columns)}")
 
-if biomarker == 'ADAS' and 'ADAS' in data.columns:
-    adas_stats = load_pickle(adas_stats_path)
-    adas_mean, adas_std = unpack_stats(adas_stats, "ADAS")
-    data['ADAS'] = normalize_column(data['ADAS'], adas_mean, adas_std)
-    print("✅ Normalized ADAS")
+if biomarker == 'ADAS':
+    if 'ADAS' in data.columns:
+        adas_stats = load_pickle(adas_stats_path)
+        adas_mean, adas_std = unpack_stats(adas_stats, "ADAS")
+        data['ADAS'] = normalize_column(data['ADAS'], adas_mean, adas_std)
+        print("✅ Normalized ADAS")
+    else:
+        print(f"⚠️  ADAS column not found in data — skipping normalization. Available columns: {list(data.columns)}")
 
 # ------------------- Save Output -------------------
 output_path = data_file.replace('.csv', f'_preprocessed.csv')
