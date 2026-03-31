@@ -7,13 +7,12 @@ import pandas as pd
 import numpy as np
 import torch
 import gpytorch
+import pickle
 from utils import *
 from models import SingleTaskDeepKernel
 import argparse
 import json
-import time
 import os
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 parser = argparse.ArgumentParser(description='Future time point inference with trained DKGP model')
 parser.add_argument("--data_file", help="Path to the data CSV file", required=True)
@@ -25,6 +24,37 @@ parser.add_argument("--stats_dir", help="Directory containing normalization stat
 parser.add_argument("--gpu_id", help="GPU ID to use", type=int, default=0)
 
 args = parser.parse_args()
+
+# ------------------- Denormalization Helper -------------------
+def load_target_stats(biomarker, roi_idx, stats_dir):
+    """Return (mean, std) used to normalize the target variable during training,
+    so predictions can be converted back to the original scale."""
+
+    def _load(path):
+        with open(path, 'rb') as f:
+            return pickle.load(f)
+
+    def _unpack(obj):
+        if isinstance(obj, dict):
+            return float(obj['mean']), float(obj['std'])
+        elif isinstance(obj, list) and len(obj) == 2:
+            return float(obj[0]), float(obj[1])
+        raise ValueError(f"Unexpected stats format: {type(obj)}")
+
+    if biomarker == 'MUSE':
+        stats = _load(os.path.join(stats_dir, 'dlmuse_rois_mean_std.pkl'))
+        col = list(stats['mean'].keys())[roi_idx]
+        return float(stats['mean'][col]), float(stats['std'][col])
+    elif biomarker == 'SPARE_AD':
+        return _unpack(_load(os.path.join(stats_dir, 'spare_ad_mean_std.pkl')))
+    elif biomarker == 'SPARE_BA':
+        return _unpack(_load(os.path.join(stats_dir, 'spare_ba_mean_std.pkl')))
+    elif biomarker == 'MMSE':
+        return _unpack(_load(os.path.join(stats_dir, 'mmse_mean_std.pkl')))
+    elif biomarker == 'ADAS':
+        return _unpack(_load(os.path.join(stats_dir, 'adas_mean_std.pkl')))
+    else:
+        raise ValueError(f"Unknown biomarker: {biomarker}")
 
 # Parse arguments
 gpu_id = args.gpu_id
@@ -54,7 +84,6 @@ checkpoint = torch.load(model_file, map_location=f'cuda:{gpu_id}' if torch.cuda.
 
 # Extract model components
 model_state_dict = checkpoint['model_state_dict']
-optimizer_state_dict = checkpoint['optimizer_state_dict']
 likelihood_state_dict = checkpoint['likelihood_state_dict']
 
 # Check if training data is available in checkpoint
@@ -110,7 +139,7 @@ test_data = datasamples
 # remove any Unnamed columns
 test_data = test_data.loc[:, ~test_data.columns.str.contains('^Unnamed')]
 
-print('Columns: ', test_data.columns)
+print(f"Data columns ({len(test_data.columns)}): {list(test_data.columns[:5])} ...")
 
 # For each subject, extract only the first (baseline) row so that
 # baseline_ptids[i] and baseline_data[i] are guaranteed to correspond.
@@ -132,38 +161,6 @@ baseline_data = np.array(baseline_data)
 
 print(f"Extracted baseline data for {len(baseline_ptids)} subjects")
 print(f"Baseline feature shape: {baseline_data.shape}")
-
-# ------------------- Denormalization Setup -------------------
-def load_target_stats(biomarker, roi_idx, stats_dir):
-    """Return (mean, std) used to normalize the target variable during training,
-    so predictions can be converted back to the original scale."""
-    import pickle
-
-    def _load(path):
-        with open(path, 'rb') as f:
-            return pickle.load(f)
-
-    def _unpack(obj):
-        if isinstance(obj, dict):
-            return float(obj['mean']), float(obj['std'])
-        elif isinstance(obj, list) and len(obj) == 2:
-            return float(obj[0]), float(obj[1])
-        raise ValueError(f"Unexpected stats format: {type(obj)}")
-
-    if biomarker == 'MUSE':
-        stats = _load(os.path.join(stats_dir, 'dlmuse_rois_mean_std.pkl'))
-        col = list(stats['mean'].keys())[roi_idx]
-        return float(stats['mean'][col]), float(stats['std'][col])
-    elif biomarker == 'SPARE_AD':
-        return _unpack(_load(os.path.join(stats_dir, 'spare_ad_mean_std.pkl')))
-    elif biomarker == 'SPARE_BA':
-        return _unpack(_load(os.path.join(stats_dir, 'spare_ba_mean_std.pkl')))
-    elif biomarker == 'MMSE':
-        return _unpack(_load(os.path.join(stats_dir, 'mmse_mean_std.pkl')))
-    elif biomarker == 'ADAS':
-        return _unpack(_load(os.path.join(stats_dir, 'adas_mean_std.pkl')))
-    else:
-        raise ValueError(f"Unknown biomarker: {biomarker}")
 
 print(f"\nLoading denormalization stats for {biomarker} (roi_idx={roi_idx})...")
 try:
