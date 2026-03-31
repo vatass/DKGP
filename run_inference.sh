@@ -21,33 +21,35 @@ run_inference() {
     local data_file=$3
     local roi_idx=$4
     local output_prefix=$5
-    
+    local biomarker=$6
+
     echo ""
     echo "=== Running inference for $model_type (ROI $roi_idx) ==="
     echo "Model: $model_file"
     echo "Data: $data_file"
-    
+
     # Check if model file exists
     if [ ! -f "$model_file" ]; then
         echo "❌ Error: Model file not found: $model_file"
         return 1
     fi
-    
+
     # Check if data file exists
     if [ ! -f "$data_file" ]; then
         echo "❌ Error: Data file not found: $data_file"
         return 1
     fi
-        
+
     output_file="$OUTPUT_DIR/${output_prefix}_output.csv"
-    
+
     python pdkgp_future_inference.py \
         --data_file "$data_file" \
         --model_file "$model_file" \
         --roi_idx $roi_idx \
         --output_file "$output_file" \
+        --biomarker "$biomarker" \
         --gpu_id $GPU_ID
-    
+
     if [ $? -eq 0 ]; then
         echo "✅ Success: $model_type inference completed"
         echo "Results saved to: $output_file"
@@ -77,7 +79,8 @@ run_inference_all_rois() {
             "./models/population_deep_kernel_gp_${roi_idx}.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
             $roi_idx \
-            "temp_rois/roi_${roi_idx}"
+            "temp_rois/roi_${roi_idx}" \
+            "MUSE"
         
         if [ $? -eq 0 ]; then
             completed=$((completed + 1))
@@ -177,7 +180,8 @@ case "$1" in
             "./models/population_deep_kernel_gp_14.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
             14 \
-            "hippocampus_right"
+            "hippocampus_right" \
+            "MUSE"
         ;;
 
     "hippocampus_left"|"hippo_left"|"15")
@@ -186,7 +190,8 @@ case "$1" in
             "./models/population_deep_kernel_gp_15.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
             15 \
-            "hippocampus_left"
+            "hippocampus_left" \
+            "MUSE"
         ;;
 
     # Volume ROIs - Lateral Ventricles
@@ -196,7 +201,8 @@ case "$1" in
             "./models/population_deep_kernel_gp_16.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
             16 \
-            "lateral_ventricle_right"
+            "lateral_ventricle_right" \
+            "MUSE"
         ;;
 
     "ventricle_left"|"lateral_ventricle_left"|"17")
@@ -205,7 +211,8 @@ case "$1" in
             "./models/population_deep_kernel_gp_17.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
             17 \
-            "lateral_ventricle_left"
+            "lateral_ventricle_left" \
+            "MUSE"
         ;;
 
     # SPARE Scores
@@ -215,7 +222,8 @@ case "$1" in
             "./models_spare/population_deep_kernel_gp_0.pth" \
             "./data/data_dl_muse_nichart_spare_test_unnorm_preprocessed.csv" \
             0 \
-            "spare_ad"
+            "spare_ad" \
+            "SPARE_AD"
         ;;
 
     "spare_ba"|"spare-ba")
@@ -224,7 +232,8 @@ case "$1" in
             "./models_spare/population_deep_kernel_gp_1.pth" \
             "./data/data_dl_muse_nichart_spare_test_unnorm_preprocessed.csv" \
             1 \
-            "spare_ba"
+            "spare_ba" \
+            "SPARE_BA"
         ;;
 
     # Cognitive Scores
@@ -234,7 +243,8 @@ case "$1" in
             "./models_cognitive/mmse/population_deep_kernel_gp_0.pth" \
             "./data/data_dl_muse_nichart_mmse_test_unnorm_preprocessed.csv" \
             0 \
-            "mmse"
+            "mmse" \
+            "MMSE"
         ;;
 
     "adas")
@@ -243,7 +253,8 @@ case "$1" in
             "./models_cognitive/adas/population_deep_kernel_gp_0.pth" \
             "./data/data_dl_muse_nichart_adas_test_unnorm_preprocessed.csv" \
             0 \
-            "adas"
+            "adas" \
+            "ADAS"
         ;;
 
     # Volume ROIs - Run all 145 ROIs and combine into single CSV
@@ -261,55 +272,62 @@ case "$1" in
             "./models/population_deep_kernel_gp_14.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
             14 \
-            "hippocampus_right"
-        
+            "hippocampus_right" \
+            "MUSE"
+
         # Left Hippocampus
         run_inference \
             "Left Hippocampus" \
             "./models/population_deep_kernel_gp_15.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
             15 \
-            "hippocampus_left"
-        
+            "hippocampus_left" \
+            "MUSE"
+
         # Right Lateral Ventricle
         run_inference \
             "Right Lateral Ventricle" \
             "./models/population_deep_kernel_gp_16.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
             16 \
-            "lateral_ventricle_right"
-        
+            "lateral_ventricle_right" \
+            "MUSE"
+
         # Left Lateral Ventricle
         run_inference \
             "Left Lateral Ventricle" \
             "./models/population_deep_kernel_gp_17.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
             17 \
-            "lateral_ventricle_left"
-        
+            "lateral_ventricle_left" \
+            "MUSE"
+
         # SPARE-AD
         run_inference \
             "SPARE-AD" \
             "./models_spare/population_deep_kernel_gp_0.pth" \
             "./data/data_dl_muse_nichart_spare_test_unnorm_preprocessed.csv" \
             0 \
-            "spare_ad"
-        
+            "spare_ad" \
+            "SPARE_AD"
+
         # SPARE-BA
         run_inference \
             "SPARE-BA" \
             "./models_spare/population_deep_kernel_gp_1.pth" \
             "./data/data_dl_muse_nichart_spare_test_unnorm_preprocessed.csv" \
             1 \
-            "spare_ba"
-        
+            "spare_ba" \
+            "SPARE_BA"
+
         # MMSE
         run_inference \
             "MMSE" \
             "./models_cognitive/mmse/population_deep_kernel_gp_0.pth" \
             "./data/data_dl_muse_nichart_mmse_test_unnorm_preprocessed.csv" \
             0 \
-            "mmse"
+            "mmse" \
+            "MMSE"
         
         # ADAS
         run_inference \
@@ -317,7 +335,8 @@ case "$1" in
             "./models_cognitive/adas/population_deep_kernel_gp_0.pth" \
             "./data/data_dl_muse_nichart_adas_test_unnorm_preprocessed.csv" \
             0 \
-            "adas"
+            "adas" \
+            "ADAS"
         ;;
 
     *)

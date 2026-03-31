@@ -20,6 +20,8 @@ parser.add_argument("--data_file", help="Path to the data CSV file", required=Tr
 parser.add_argument("--model_file", help="Path to the trained model file", required=True)
 parser.add_argument("--roi_idx", help="ROI index for inference", type=int, required=True)
 parser.add_argument("--output_file", help="Path to save inference results CSV", required=True)
+parser.add_argument("--biomarker", help="Biomarker type (MUSE, SPARE_AD, SPARE_BA, MMSE, ADAS)", required=True)
+parser.add_argument("--stats_dir", help="Directory containing normalization statistics", default="./statistics")
 parser.add_argument("--gpu_id", help="GPU ID to use", type=int, default=0)
 
 args = parser.parse_args()
@@ -30,6 +32,8 @@ roi_idx = args.roi_idx
 data_file = args.data_file
 model_file = args.model_file
 output_file = args.output_file
+biomarker = args.biomarker.upper()
+stats_dir = args.stats_dir
 
 # Define future time points (8 years = 96 months, every 12 months)
 future_timepoints = [0, 12, 24, 36, 48, 60, 72, 84, 96]
@@ -129,6 +133,48 @@ baseline_data = np.array(baseline_data)
 print(f"Extracted baseline data for {len(baseline_ptids)} subjects")
 print(f"Baseline feature shape: {baseline_data.shape}")
 
+# ------------------- Denormalization Setup -------------------
+def load_target_stats(biomarker, roi_idx, stats_dir):
+    """Return (mean, std) used to normalize the target variable during training,
+    so predictions can be converted back to the original scale."""
+    import pickle
+
+    def _load(path):
+        with open(path, 'rb') as f:
+            return pickle.load(f)
+
+    def _unpack(obj):
+        if isinstance(obj, dict):
+            return float(obj['mean']), float(obj['std'])
+        elif isinstance(obj, list) and len(obj) == 2:
+            return float(obj[0]), float(obj[1])
+        raise ValueError(f"Unexpected stats format: {type(obj)}")
+
+    if biomarker == 'MUSE':
+        stats = _load(os.path.join(stats_dir, 'dlmuse_rois_mean_std.pkl'))
+        col = f'DL_MUSE_{roi_idx}'
+        return float(stats['mean'][col]), float(stats['std'][col])
+    elif biomarker == 'SPARE_AD':
+        return _unpack(_load(os.path.join(stats_dir, 'spare_ad_mean_std.pkl')))
+    elif biomarker == 'SPARE_BA':
+        return _unpack(_load(os.path.join(stats_dir, 'spare_ba_mean_std.pkl')))
+    elif biomarker == 'MMSE':
+        return _unpack(_load(os.path.join(stats_dir, 'mmse_mean_std.pkl')))
+    elif biomarker == 'ADAS':
+        return _unpack(_load(os.path.join(stats_dir, 'adas_mean_std.pkl')))
+    else:
+        raise ValueError(f"Unknown biomarker: {biomarker}")
+
+print(f"\nLoading denormalization stats for {biomarker} (roi_idx={roi_idx})...")
+try:
+    target_mean, target_std = load_target_stats(biomarker, roi_idx, stats_dir)
+    print(f"Target stats: mean={target_mean:.4f}, std={target_std:.4f}")
+    denormalize = True
+except Exception as e:
+    print(f"⚠️  Could not load denormalization stats: {e}")
+    print("Predictions will remain in normalized scale.")
+    denormalize = False
+
 # Create future time point data
 all_results = []
 
@@ -163,7 +209,16 @@ for time_point in future_timepoints:
     variance_np = variance.cpu().detach().numpy()
     lower_np = lower.cpu().detach().numpy()
     upper_np = upper.cpu().detach().numpy()
-    
+
+    # Inverse-normalize predictions back to original scale:
+    #   y_original = y_normalized * std + mean
+    #   Var(y_original) = Var(y_normalized) * std^2
+    if denormalize:
+        mean_np    = mean_np    * target_std + target_mean
+        lower_np   = lower_np   * target_std + target_mean
+        upper_np   = upper_np   * target_std + target_mean
+        variance_np = variance_np * (target_std ** 2)
+
     # Create results for this time point
     for i, ptid in enumerate(baseline_ptids):
         result = {
