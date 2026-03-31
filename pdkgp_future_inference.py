@@ -152,7 +152,7 @@ def load_target_stats(biomarker, roi_idx, stats_dir):
 
     if biomarker == 'MUSE':
         stats = _load(os.path.join(stats_dir, 'dlmuse_rois_mean_std.pkl'))
-        col = f'DL_MUSE_{roi_idx}'
+        col = list(stats['mean'].keys())[roi_idx]
         return float(stats['mean'][col]), float(stats['std'][col])
     elif biomarker == 'SPARE_AD':
         return _unpack(_load(os.path.join(stats_dir, 'spare_ad_mean_std.pkl')))
