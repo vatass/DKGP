@@ -67,6 +67,37 @@ python -c "import torch; import gpytorch; import pandas; import numpy; import sk
 ./run_inference.sh hippocampus_right
 ```
 
+## Data Preprocessing
+
+Before running inference, the input CSV must be normalized using `preprocess_data.py`. This script z-scores imaging ROIs, normalizes Age, binarizes Sex, encodes Diagnosis, and normalizes biomarker-specific scores using precomputed training statistics from `./statistics/`.
+
+```bash
+# Volume ROIs
+python preprocess_data.py --data_file ./data/data_dl_muse_nichart_test_unnorm.csv --biomarker MUSE
+
+# SPARE scores
+python preprocess_data.py --data_file ./data/data_dl_muse_nichart_spare_test_unnorm.csv --biomarker SPARE_AD
+
+# Cognitive scores
+python preprocess_data.py --data_file ./data/data_dl_muse_nichart_mmse_test_unnorm.csv --biomarker MMSE
+python preprocess_data.py --data_file ./data/data_dl_muse_nichart_adas_test_unnorm.csv --biomarker ADAS
+```
+
+The script saves a `_preprocessed.csv` file alongside the input and runs a pre-save validation that raises an error if any required column was not normalized.
+
+**Supported `--biomarker` values:** `MUSE`, `SPARE_AD`, `SPARE_BA`, `MMSE`, `ADAS`
+
+**Columns normalized per biomarker:**
+
+| Biomarker | ROIs | Age | SPARE_BA | MMSE_nearest_2.0 | ADAS_COG_13 |
+|-----------|------|-----|----------|------------------|-------------|
+| MUSE      | ✅   | ✅  |          |                  |             |
+| SPARE_AD / SPARE_BA | ✅ | ✅ | ✅   |                  |             |
+| MMSE      | ✅   | ✅  | ✅       | ✅               |             |
+| ADAS      | ✅   | ✅  | ✅       |                  | ✅          |
+
+> The preprocessed file is the expected input for `run_inference.sh`.
+
 ## Inference Usage
 
 ### Main Inference Script
@@ -217,6 +248,7 @@ DKGP provides **extremely fast inference** for biomarker trajectory prediction:
 DKGP/
 ├── run_inference.sh                    # Main inference script
 ├── pdkgp_future_inference.py          # Core inference logic
+├── preprocess_data.py                 # Preprocessing pipeline (run before inference)
 ├── visualize_trajectories.py          # Validation and plotting
 ├── plot_single_subject.py             # Single subject visualization
 ├── setup_minimal_environment.sh       # Environment setup script
@@ -224,6 +256,7 @@ DKGP/
 ├── environment_minimal.yml            # Conda environment (alternative)
 ├── README.md                          # This file
 ├── .gitignore                         # Git ignore rules
+├── statistics/                        # Precomputed normalization stats (required)
 ├── data/                              # Input data (not tracked)
 ├── models/                            # Trained models (not tracked)
 └── output/                            # Inference results (not tracked)
