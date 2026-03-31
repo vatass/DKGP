@@ -93,10 +93,14 @@ age_mean, age_std = unpack_stats(age_stats, "Age")
 roi_cols = [col for col in data.columns if col in roi_mean]
 print(f"🔍 Found {len(roi_cols)} ROI columns to normalize")
 
-for col in roi_cols:
-    data[col] = (data[col] - roi_mean[col]) / roi_std[col]
-
-print(f"✅ Normalized {len(roi_cols)} ROI columns")
+if len(roi_cols) == 0:
+    print(f"⚠️  No ROI columns matched the stats keys — check that column names align.")
+    print(f"    Data columns (first 10): {list(data.columns[:10])}")
+    print(f"    Stats keys (first 10):   {list(roi_mean.keys())[:10]}")
+else:
+    for col in roi_cols:
+        data[col] = (data[col] - roi_mean[col]) / roi_std[col]
+    print(f"✅ Normalized {len(roi_cols)} ROI columns")
 
 # ------------------- Demographic Normalization -------------------
 if 'Diagnosis_nearest_2.0' in data.columns:
@@ -122,22 +126,22 @@ if biomarker in ['SPARE_AD', 'SPARE_BA', 'MMSE', 'ADAS']:
         print(f"⚠️  SPARE_BA column not found in data — skipping normalization. Available columns: {list(data.columns)}")
 
 if biomarker == 'MMSE':
-    if 'MMSE' in data.columns:
+    if 'MMSE_nearest_2.0' in data.columns:
         mmse_stats = load_pickle(mmse_stats_path)
         mmse_mean, mmse_std = unpack_stats(mmse_stats, "MMSE")
-        data['MMSE'] = normalize_column(data['MMSE'], mmse_mean, mmse_std)
-        print("✅ Normalized MMSE")
+        data['MMSE_nearest_2.0'] = normalize_column(data['MMSE_nearest_2.0'], mmse_mean, mmse_std)
+        print("✅ Normalized MMSE_nearest_2.0")
     else:
-        print(f"⚠️  MMSE column not found in data — skipping normalization. Available columns: {list(data.columns)}")
+        print(f"⚠️  MMSE_nearest_2.0 column not found in data — skipping normalization. Available columns: {list(data.columns)}")
 
 if biomarker == 'ADAS':
-    if 'ADAS' in data.columns:
+    if 'ADAS_COG_13' in data.columns:
         adas_stats = load_pickle(adas_stats_path)
         adas_mean, adas_std = unpack_stats(adas_stats, "ADAS")
-        data['ADAS'] = normalize_column(data['ADAS'], adas_mean, adas_std)
-        print("✅ Normalized ADAS")
+        data['ADAS_COG_13'] = normalize_column(data['ADAS_COG_13'], adas_mean, adas_std)
+        print("✅ Normalized ADAS_COG_13")
     else:
-        print(f"⚠️  ADAS column not found in data — skipping normalization. Available columns: {list(data.columns)}")
+        print(f"⚠️  ADAS_COG_13 column not found in data — skipping normalization. Available columns: {list(data.columns)}")
 
 # ------------------- Save Output -------------------
 output_path = data_file.replace('.csv', f'_preprocessed.csv')
