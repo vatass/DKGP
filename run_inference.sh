@@ -152,10 +152,10 @@ print(f'Columns: {list(combined_df.columns)[:10]}... (showing first 10)')
 echo ""
 echo "Available biomarker types:"
 echo "=== Volume ROIs ==="
-echo "  hippocampus_right (ROI 14) - Right Hippocampus"
-echo "  hippocampus_left (ROI 15)  - Left Hippocampus"
-echo "  ventricle_right (ROI 16)   - Right Lateral Ventricle"
-echo "  ventricle_left (ROI 17)    - Left Lateral Ventricle"
+echo "  hippocampus_right (ROI 13) - Right Hippocampus"
+echo "  hippocampus_left (ROI 14)  - Left Hippocampus"
+echo "  ventricle_right (ROI 17)   - Right Lateral Ventricle"
+echo "  ventricle_left (ROI 18)    - Left Lateral Ventricle"
 echo "  volume_rois                - All 145 Volume ROIs (single CSV)"
 echo ""
 echo "=== SPARE Scores ==="
@@ -174,43 +174,43 @@ echo ""
 case "$1" in
 
     # Volume ROIs - Hippocampus
-    "hippocampus_right"|"hippo_right"|"14")
+    "hippocampus_right"|"hippo_right"|"13")
         run_inference \
             "Right Hippocampus" \
-            "./models/population_deep_kernel_gp_14.pth" \
+            "./models/population_deep_kernel_gp_13.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
-            14 \
+            13 \
             "hippocampus_right" \
             "MUSE"
         ;;
 
-    "hippocampus_left"|"hippo_left"|"15")
+    "hippocampus_left"|"hippo_left"|"14")
         run_inference \
             "Left Hippocampus" \
-            "./models/population_deep_kernel_gp_15.pth" \
+            "./models/population_deep_kernel_gp_14.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
-            15 \
+            14 \
             "hippocampus_left" \
             "MUSE"
         ;;
 
     # Volume ROIs - Lateral Ventricles
-    "ventricle_right"|"lateral_ventricle_right"|"16")
+    "ventricle_right"|"lateral_ventricle_right"|"17")
         run_inference \
             "Right Lateral Ventricle" \
-            "./models/population_deep_kernel_gp_16.pth" \
+            "./models/population_deep_kernel_gp_17.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
-            16 \
+            17 \
             "lateral_ventricle_right" \
             "MUSE"
         ;;
 
-    "ventricle_left"|"lateral_ventricle_left"|"17")
+    "ventricle_left"|"lateral_ventricle_left"|"18")
         run_inference \
             "Left Lateral Ventricle" \
-            "./models/population_deep_kernel_gp_17.pth" \
+            "./models/population_deep_kernel_gp_18.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
-            17 \
+            18 \
             "lateral_ventricle_left" \
             "MUSE"
         ;;
@@ -269,36 +269,36 @@ case "$1" in
         # Right Hippocampus
         run_inference \
             "Right Hippocampus" \
-            "./models/population_deep_kernel_gp_14.pth" \
+            "./models/population_deep_kernel_gp_13.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
-            14 \
+            13 \
             "hippocampus_right" \
             "MUSE"
 
         # Left Hippocampus
         run_inference \
             "Left Hippocampus" \
-            "./models/population_deep_kernel_gp_15.pth" \
+            "./models/population_deep_kernel_gp_14.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
-            15 \
+            14 \
             "hippocampus_left" \
             "MUSE"
 
         # Right Lateral Ventricle
         run_inference \
             "Right Lateral Ventricle" \
-            "./models/population_deep_kernel_gp_16.pth" \
+            "./models/population_deep_kernel_gp_17.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
-            16 \
+            17 \
             "lateral_ventricle_right" \
             "MUSE"
 
         # Left Lateral Ventricle
         run_inference \
             "Left Lateral Ventricle" \
-            "./models/population_deep_kernel_gp_17.pth" \
+            "./models/population_deep_kernel_gp_18.pth" \
             "./data/data_dl_muse_nichart_test_unnorm_preprocessed.csv" \
-            17 \
+            18 \
             "lateral_ventricle_left" \
             "MUSE"
 
