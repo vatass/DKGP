@@ -140,7 +140,7 @@ def load_target_stats(biomarker, roi_idx, stats_dir):
     import pickle
 
     # read the 
-    muse_cols = np.load(os.path.join(stats_dir, 'hmuse_list.npy'), allow_pickle=True)
+    muse_cols = np.load(os.path.join(stats_dir, 'muse_list.npy'), allow_pickle=True)
 
     def _load(path):
         with open(path, 'rb') as f:
