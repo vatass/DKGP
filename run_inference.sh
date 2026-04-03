@@ -343,10 +343,10 @@ case "$1" in
         echo "Usage: $0 [biomarker_name]"
         echo ""
         echo "=== Volume ROIs ==="
-        echo "  hippocampus_right      - Right Hippocampus (ROI 14)"
-        echo "  hippocampus_left       - Left Hippocampus (ROI 15)"
-        echo "  ventricle_right        - Right Lateral Ventricle (ROI 16)"
-        echo "  ventricle_left         - Left Lateral Ventricle (ROI 17)"
+        echo "  hippocampus_right      - Right Hippocampus (ROI 13)"
+        echo "  hippocampus_left       - Left Hippocampus (ROI 14)"
+        echo "  ventricle_right        - Right Lateral Ventricle (ROI 17)"
+        echo "  ventricle_left         - Left Lateral Ventricle (ROI 18)"
         echo "  volume_rois            - All 145 Volume ROIs (single CSV)"
         echo ""
         echo "=== SPARE Scores ==="
@@ -370,7 +370,7 @@ case "$1" in
         echo "Output:"
         echo "  Results will be saved to ./output/{biomarker_name}_output.csv"
         echo "  CSV format: PTID, Time, biomarker_columns"
-        echo "  For volume_rois: PTID, Time, DL_MUSE_0, DL_MUSE_1, ..., DL_MUSE_144"
+        echo "  For volume_rois: PTID, Time, DL_MUSE_4, DL_MUSE_11, ..., DL_MUSE_207"
         ;;
 esac
 

@@ -139,6 +139,9 @@ def load_target_stats(biomarker, roi_idx, stats_dir):
     so predictions can be converted back to the original scale."""
     import pickle
 
+    # read the 
+    muse_cols = np.load(os.path.join(stats_dir, 'hmuse_list.npy'), allow_pickle=True)
+
     def _load(path):
         with open(path, 'rb') as f:
             return pickle.load(f)
@@ -152,8 +155,13 @@ def load_target_stats(biomarker, roi_idx, stats_dir):
 
     if biomarker == 'MUSE':
         stats = _load(os.path.join(stats_dir, 'dlmuse_rois_mean_std.pkl'))
-        col = list(stats['mean'].keys())[roi_idx]
-        return float(stats['mean'][col]), float(stats['std'][col])
+
+        roi_col = muse_cols[roi_idx]
+    
+        target_mean = stats['mean']['DL_MUSE_Volume_' + str(roi_col)]
+        target_std = stats['std']['DL_MUSE_Volume_' + str(roi_col)]
+
+        return float( stats['mean']['DL_MUSE_Volume_' + str(roi_col)]), float(stats['std']['DL_MUSE_Volume_' + str(roi_col)])
     elif biomarker == 'SPARE_AD':
         return _unpack(_load(os.path.join(stats_dir, 'spare_ad_mean_std.pkl')))
     elif biomarker == 'SPARE_BA':
