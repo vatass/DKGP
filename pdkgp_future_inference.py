@@ -162,8 +162,8 @@ def load_target_stats(biomarker, roi_idx, stats_dir):
         target_std = stats['std']['DL_MUSE_Volume_' + str(roi_col)]
 
         return float( stats['mean']['DL_MUSE_Volume_' + str(roi_col)]), float(stats['std']['DL_MUSE_Volume_' + str(roi_col)])
-    elif biomarker == 'SPARE_AD':
-        return _unpack(_load(os.path.join(stats_dir, 'spare_ad_mean_std.pkl')))
+    # elif biomarker == 'SPARE_AD':
+    #     return _unpack(_load(os.path.join(stats_dir, 'spare_ad_mean_std.pkl')))
     elif biomarker == 'SPARE_BA':
         return _unpack(_load(os.path.join(stats_dir, 'spare_ba_mean_std.pkl')))
     elif biomarker == 'MMSE':
@@ -173,14 +173,17 @@ def load_target_stats(biomarker, roi_idx, stats_dir):
     else:
         raise ValueError(f"Unknown biomarker: {biomarker}")
 
-print(f"\nLoading denormalization stats for {biomarker} (roi_idx={roi_idx})...")
-try:
-    target_mean, target_std = load_target_stats(biomarker, roi_idx, stats_dir)
-    print(f"Target stats: mean={target_mean:.4f}, std={target_std:.4f}")
-    denormalize = True
-except Exception as e:
-    print(f"⚠️  Could not load denormalization stats: {e}")
-    print("Predictions will remain in normalized scale.")
+if biomarker != 'SPARE_AD':
+    print(f"\nLoading denormalization stats for {biomarker} (roi_idx={roi_idx})...")
+    try:
+        target_mean, target_std = load_target_stats(biomarker, roi_idx, stats_dir)
+        print(f"Target stats: mean={target_mean:.4f}, std={target_std:.4f}")
+        denormalize = True
+    except Exception as e:
+        print(f"⚠️  Could not load denormalization stats: {e}")
+        print("Predictions will remain in normalized scale.")
+        denormalize = False
+else: 
     denormalize = False
 
 # Create future time point data
